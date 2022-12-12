@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "module": "esnext",
+    "moduleResolution": "node", //follows nodejs module import pattern for relative and non relative imports
+    "strict": true,
+    "sourceMap": true,
+    "target": "ES2015",
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "lib": ["es6", "dom"],
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true
+  },
+  "include": ["src/**/*"]
+}
