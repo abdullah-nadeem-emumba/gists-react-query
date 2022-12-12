@@ -1,7 +1,7 @@
 import { UserType } from "../types/types";
 export const CARD: string = "CARD";
 export const LIST: string = "LIST";
-const TOKEN: string = "avd";
+const TOKEN: string = "asas";
 const USERNAME: string = "abdullah-nadeem-emumba";
 const URL: string = "https://github.com/abdullah-nadeem-emumba";
 export const USER: UserType = {

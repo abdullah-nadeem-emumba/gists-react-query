@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import {
@@ -18,7 +18,6 @@ import UserInfo from "../../components/UserInfo/UserInfo";
 import GistActions from "../../components/GistActions/GistActions";
 import ArrowsBox from "../../components/ArrowBox/Arrowbox";
 import { useLocation, useNavigate } from "react-router-dom";
-import { UserContext } from "../../contexts/UserContext";
 import { formatFileContent } from "../../utils/utils";
 import {
   isGistStarred,
@@ -40,7 +39,6 @@ export default function GistDetails() {
   const navigate = useNavigate();
   const { files, owner, id, description } = state;
   const filename = Object.keys(files)[0];
-  //const { user } = useContext(UserContext);
   const user = useSelector((state: RootState) => state.user);
 
   const checkGistStar = async (gistID: string) => {

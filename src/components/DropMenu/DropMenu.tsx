@@ -1,14 +1,12 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { Menu, MenuList, Divider, ListItemText } from "@mui/material";
-import { UserContext } from "../../contexts/UserContext";
 import { StyledMenuItem, StyledLink, StyledATag } from "./DropMenu.styles";
 import { DropMenuProps } from "../../types/types";
 
 export default function DropMenu(props: DropMenuProps) {
   const { open, onClose, anchorEl, signout } = props;
-  //const { user } = useContext(UserContext);
   const user = useSelector((state: RootState) => state.user);
   return (
     <Menu

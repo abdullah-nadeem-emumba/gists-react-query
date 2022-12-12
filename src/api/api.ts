@@ -1,4 +1,5 @@
 import axios from "axios";
+import { createGistType, editGistType } from "../types/types";
 import { getUserFromStorage, returnFiles } from "../utils/utils";
 
 const api = axios.create({
@@ -103,7 +104,7 @@ export const getUserGists = async (username: string | undefined) => {
   }
 };
 
-export const createNewGist = async (description: string, files: any) => {
+export const createNewGist = async ({ description, files }: createGistType) => {
   const data = {
     description,
     public: true,
@@ -120,7 +121,7 @@ export const createNewGist = async (description: string, files: any) => {
   }
 };
 
-export const editGist = async (id: string, description: string, files: any) => {
+export const editGist = async ({ id, description, files }: editGistType) => {
   const data = {
     gist_id: id,
     description,

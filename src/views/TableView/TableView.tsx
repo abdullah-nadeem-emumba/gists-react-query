@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import {
@@ -20,7 +20,6 @@ import {
   StyledHeaderCell,
   StyledTableCell,
 } from "./TableView.styles";
-import { UserContext } from "../../contexts/UserContext";
 import { formattedDate, formattedTime } from "../../utils/utils";
 
 export default function TableView(props: TableViewProps) {

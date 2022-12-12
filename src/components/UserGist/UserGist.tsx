@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import UserInfo from "../UserInfo/UserInfo";
 import { Typography } from "@mui/material";
-import { UserContext } from "../../contexts/UserContext";
 import {
   LineNumberText,
   UpperDiv,
@@ -29,7 +28,6 @@ export default function UserGist(props: UserGistProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [starred, setStarred] = useState<boolean | undefined>(false);
-  // const { user } = useContext(UserContext);
   const user = useSelector((state: RootState) => state.user);
 
   useEffect(() => {

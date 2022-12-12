@@ -1,10 +1,5 @@
 import React from "react";
 
-export type UserContextType = {
-  user: any;
-  setUser: React.Dispatch<any>;
-};
-
 export type ButtonProps = {
   text: string;
   customstyle?: "light" | "dark";
@@ -128,4 +123,15 @@ export type TableStarProps = {
   id: string;
   handleStar: (id: string, setStarred: (starred: boolean) => void) => void;
   handleUnstar: (id: string, setStarred: (starred: boolean) => void) => void;
+};
+
+export type createGistType = {
+  description: string;
+  files: any;
+};
+
+export type editGistType = {
+  id: string;
+  description: string;
+  files: any;
 };

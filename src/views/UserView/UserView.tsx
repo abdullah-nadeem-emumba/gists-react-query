@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import UserGist from "../../components/UserGist/UserGist";
 import { Typography, Avatar, Button } from "@mui/material";
-import { UserContext } from "../../contexts/UserContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getUserGists, getAuthUserGists } from "../../api/api";
 import {
@@ -21,13 +20,13 @@ export default function UserView(props: UserViewProps) {
   const { username } = props;
   //const [gists, setGists] = useState<any[]>([]);
   //const [loading, setLoading] = useState(false);
-  const { user } = useContext(UserContext);
   const { state } = useLocation();
   const navigate = useNavigate();
   const { gists, loading } = useSelector(
     (state: RootState) => state.userProfile
   );
   const dispatch = useDispatch<AppDispatch>();
+  const user = useSelector((state: RootState) => state.user);
 
   const owner: any = gists.length > 0 && gists[0].owner;
 

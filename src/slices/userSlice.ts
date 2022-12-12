@@ -13,12 +13,12 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    login: (state) => {
+    login: (state: UserType) => {
       state.username = USER.username;
       state.token = USER.token;
       state.url = USER.url;
     },
-    logout: (state) => {
+    logout: (state: UserType) => {
       state.username = "";
       state.token = "";
       state.url = "";

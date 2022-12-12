@@ -9,9 +9,10 @@ import {
   FormContainer,
   MarginDiv,
 } from "../GistForm/GistForm.styles";
-import { createNewGist, editGist } from "../../api/api";
+//import { createNewGist, editGist } from "../../api/api";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { useCreateGist, useEditGist } from "../../utils/useCreateGist";
 
 export default function GistHookForm() {
   const navigate = useNavigate();
@@ -43,6 +44,9 @@ export default function GistHookForm() {
     resolver: yupResolver(validationSchema),
   });
 
+  const { mutate: createGist, isError: createGistErr } = useCreateGist();
+  const { mutate: editGist, isError: editGistErr } = useEditGist();
+
   const { fields, append, remove } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)
     name: "files", // unique name for your Field Array
@@ -50,11 +54,17 @@ export default function GistHookForm() {
 
   const submitForm = async (data: any) => {
     if (state) {
-      const response = await editGist(state.id, data.description, data.files);
-      if (response) navigate("/");
+      // const response = await editGist({id:state.id, description:data.description, files:data.files});
+      editGist({
+        id: state.id,
+        description: data.description,
+        files: data.files,
+      });
+      if (!editGistErr) navigate("/");
     } else {
-      const response = await createNewGist(data.description, data.files);
-      if (response) navigate("/");
+      //const response = await createNewGist(data.description, data.files);
+      createGist({ description: data.description, files: data.files });
+      if (!createGistErr) navigate("/");
     }
   };
 
