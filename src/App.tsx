@@ -10,30 +10,34 @@ import StarredGistsScreen from "./screens/StarredGistsScreen/StarredGistsScreen"
 import { UserContext } from "./contexts/UserContext";
 import { getUserFromStorage } from "./utils/utils";
 import Protected from "./components/ProtectedRoute/Protected";
+import { QueryClientProvider, QueryClient } from "react-query";
 
 export default function App() {
   const [user, setUser] = useState(getUserFromStorage());
   const providerValue = useMemo(() => ({ user, setUser }), [user, setUser]);
+  const queryClient = new QueryClient();
 
   return (
-    <div>
-      <GlobalStyles />
-      <UserContext.Provider value={providerValue}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/search" element={<SearchScreen />} />
-          <Route
-            path="/create"
-            element={<Protected Component={CreateGist} />}
-          />
-          <Route path="/profile/:username" element={<UserProfile />} />
-          <Route path="/gistdetails" element={<GistScreen />} />
-          <Route
-            path="/starred"
-            element={<Protected Component={StarredGistsScreen} />}
-          />
-        </Routes>
-      </UserContext.Provider>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <div>
+        <GlobalStyles />
+        <UserContext.Provider value={providerValue}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/search" element={<SearchScreen />} />
+            <Route
+              path="/create"
+              element={<Protected Component={CreateGist} />}
+            />
+            <Route path="/profile/:username" element={<UserProfile />} />
+            <Route path="/gistdetails" element={<GistScreen />} />
+            <Route
+              path="/starred"
+              element={<Protected Component={StarredGistsScreen} />}
+            />
+          </Routes>
+        </UserContext.Provider>
+      </div>
+    </QueryClientProvider>
   );
 }

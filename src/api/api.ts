@@ -26,7 +26,7 @@ export const getPublicGists = async (per_page: number, page: number) => {
   if (data.length > 0) {
     return data;
   }
-  return null;
+  return [];
 };
 
 export const getGistContent = async (url: string) => {
@@ -78,6 +78,8 @@ export const getSearchedGists = async (
   per_page: number,
   page: number
 ) => {
+  console.log("username", username);
+
   try {
     const response = await api.get(
       `/users/${username}/gists?per_page=${per_page}&page=${page}`
@@ -140,7 +142,10 @@ export const getStarredGists = async (per_page: number, page: number) => {
     getConfig()
   );
   console.log(response);
-  return response.data;
+  if (response.status === 200) return response.data;
+  else {
+    return [];
+  }
 };
 
 export const getAuthUserGists = async () => {
