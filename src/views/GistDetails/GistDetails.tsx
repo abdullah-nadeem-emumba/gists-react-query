@@ -28,11 +28,14 @@ import {
   forkGist,
 } from "../../api/api";
 import Loader from "../../components/Loader/Loader";
+import { useQuery } from "react-query";
+import { useUnStarGist, useStarGist, useIsStarred } from "../../utils/useStar";
+import { useDeleteGist } from "../../utils/useCreateGist";
 
 export default function GistDetails() {
   const [filecontent, setFileContent] = useState<string[]>([]);
   const [filesData, setFilesData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  //const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [starred, setStarred] = useState<boolean | undefined>(false);
   const { state } = useLocation();
@@ -41,10 +44,15 @@ export default function GistDetails() {
   const filename = Object.keys(files)[0];
   const user = useSelector((state: RootState) => state.user);
 
-  const checkGistStar = async (gistID: string) => {
-    const res = await isGistStarred(gistID);
-    setStarred(res);
+  const { mutate: starGist, isError: starErr } = useStarGist();
+  const { mutate: unStarGist, isError: unstarErr } = useUnStarGist();
+  const { mutate: deleteGist, isError: deleteErr } = useDeleteGist();
+
+  const onSuccess = (data: any) => {
+    setStarred(data);
   };
+
+  useQuery("check-gist-star", () => isGistStarred(id), { onSuccess });
 
   const editGist = () => {
     navigate("/create", {
@@ -53,17 +61,19 @@ export default function GistDetails() {
   };
 
   const deleteMyGist = async (gistID: string) => {
-    const res = await deleteGist(gistID);
-    if (res) navigate("/");
+    deleteGist(gistID);
+    if (!deleteErr) navigate("/");
   };
 
   const toggleStar = async (gistID: string) => {
     if (!starred) {
-      const res = await starGist(gistID);
-      if (res) setStarred(true);
+      starGist(gistID);
+      setStarred(true);
+      if (starErr) setStarred(false);
     } else {
-      const res = await unStarGist(gistID);
-      if (res) setStarred(false);
+      unStarGist(gistID);
+      setStarred(false);
+      if (unstarErr) setStarred(true);
     }
   };
 
@@ -72,7 +82,7 @@ export default function GistDetails() {
   };
 
   const getFileContent = async () => {
-    setLoading(true);
+    //setLoading(true);
     try {
       const filesArr = Object.keys(files);
       let filesArray: any[] = [];
@@ -91,16 +101,18 @@ export default function GistDetails() {
       if (error instanceof Error) return setError(error.message);
       setError(String(error));
     }
-    setLoading(false);
+    //setLoading(false);
   };
 
-  useEffect(() => {
-    checkGistStar(id);
-    getFileContent();
-  }, []);
+  const { isLoading, isError } = useQuery("file-content", getFileContent);
+
+  // useEffect(() => {
+  //   //checkGistStar(id);
+  //   //getFileContent();
+  // }, []);
 
   const displayFileContent = () => {
-    if (error) {
+    if (error || isError) {
       return (
         <CenterDiv>
           <Typography>Unable to load gist...</Typography>
@@ -121,7 +133,7 @@ export default function GistDetails() {
     }
   };
 
-  return loading ? (
+  return isLoading ? (
     <Loader />
   ) : (
     <GistScreenContainer>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import UserInfo from "../UserInfo/UserInfo";
@@ -21,6 +22,8 @@ import {
 import { formatFileContent } from "../../utils/utils";
 import GistActions from "../GistActions/GistActions";
 import { UserGistProps } from "../../types/types";
+import { useUnStarGist, useStarGist, useIsStarred } from "../../utils/useStar";
+import Loader from "../Loader/Loader";
 
 export default function UserGist(props: UserGistProps) {
   const { item, onGistClick } = props;
@@ -30,14 +33,30 @@ export default function UserGist(props: UserGistProps) {
   const [starred, setStarred] = useState<boolean | undefined>(false);
   const user = useSelector((state: RootState) => state.user);
 
-  useEffect(() => {
-    getFileContent();
-    checkGistStar(item.id);
-  }, []);
+  const { mutate: starGist, isError: starErr } = useStarGist();
+  const { mutate: unStarGist, isError: unstarErr } = useUnStarGist();
+
+  // useEffect(() => {
+  //   getFileContent();
+  //   checkGistStar(item.id);
+  // }, []);
+
+  const onSuccess = (data: any) => {
+    setStarred(data);
+  };
+
+  useQuery(["check-gist-star", item.id], () => isGistStarred(item.id), {
+    onSuccess,
+  });
+
+  // useEffect(() => {
+  //   getFileContent();
+  //   checkGistStar(item.id);
+  // }, [item.id]);
 
   const getFileContent = async () => {
     if (item) {
-      setLoading(true);
+      //setLoading(true);
       try {
         const filename = Object.keys(item.files)[0];
         const response = await getGistContent(item.files[filename].raw_url);
@@ -47,24 +66,40 @@ export default function UserGist(props: UserGistProps) {
         if (e instanceof Error) return setError(e.message);
         setError(String(error));
       }
-      setLoading(false);
+      //setLoading(false);
     }
   };
 
+  const { isLoading, data, isError } = useQuery(
+    ["file-content", item],
+    getFileContent
+  );
+
+  // const toggleStar = async (gistID: string) => {
+  //   if (!starred) {
+  //     const res = await starGist(gistID);
+  //     if (res) setStarred(true);
+  //   } else {
+  //     const res = await unStarGist(gistID);
+  //     if (res) setStarred(false);
+  //   }
+  // };
   const toggleStar = async (gistID: string) => {
     if (!starred) {
-      const res = await starGist(gistID);
-      if (res) setStarred(true);
+      starGist(gistID);
+      setStarred(true);
+      if (starErr) setStarred(false);
     } else {
-      const res = await unStarGist(gistID);
-      if (res) setStarred(false);
+      unStarGist(gistID);
+      setStarred(false);
+      if (unstarErr) setStarred(true);
     }
   };
 
-  const checkGistStar = async (gistID: string) => {
-    const res = await isGistStarred(gistID);
-    setStarred(res);
-  };
+  // const checkGistStar = async (gistID: string) => {
+  //   const res = await isGistStarred(gistID);
+  //   setStarred(res);
+  // };
 
   const fork = async (gistID: string) => {
     const res = await forkGist(gistID);
@@ -74,7 +109,11 @@ export default function UserGist(props: UserGistProps) {
     if (error) {
       return (
         <CenterDiv>
-          <Typography>Unable to load gist...</Typography>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <Typography>Unable to load gist...</Typography>
+          )}
         </CenterDiv>
       );
     } else if (filecontent.length > 0) {

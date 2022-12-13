@@ -10,10 +10,10 @@ import StarredGistsScreen from "./screens/StarredGistsScreen/StarredGistsScreen"
 import { getUserFromStorage } from "./utils/utils";
 import Protected from "./components/ProtectedRoute/Protected";
 import { QueryClientProvider, QueryClient } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 export default function App() {
   const queryClient = new QueryClient();
-
   return (
     <QueryClientProvider client={queryClient}>
       <div>
@@ -33,6 +33,7 @@ export default function App() {
           />
         </Routes>
       </div>
+      <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
     </QueryClientProvider>
   );
 }

@@ -20,7 +20,8 @@ const getConfig = () => {
 
 export const getPublicGists = async (per_page: number, page: number) => {
   const response = await api.get(
-    `/gists/public?per_page=${per_page}&page=${page}`
+    `/gists/public?per_page=${per_page}&page=${page}`,
+    getConfig()
   );
   console.log(response);
   const data = response.data;
@@ -65,6 +66,8 @@ export const starGist = async (gistID: string) => {
 
 export const unStarGist = async (gistID: string) => {
   const response = await api.delete(`/gists/${gistID}/star`, getConfig());
+  console.log({ response });
+
   return response.status === 204 ? true : false;
 };
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useQuery } from "react-query";
 import {
   GistDiv,
   StyledCard,
@@ -18,34 +19,36 @@ import Loader from "../Loader/Loader";
 export default function GistCard(props: GistCardProps) {
   const { onCardClick, item } = props;
   const [filecontent, setFileContent] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
+  //const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    getFileContent();
-  }, []);
 
   const getFileContent = async () => {
     if (item) {
-      setLoading(true);
+      //setLoading(true);
       try {
         const filename = Object.keys(item.files)[0];
-        console.log(filename);
         const response = await getGistContent(item.files[filename].raw_url);
         const result = formatFileContent(response);
-        console.log(result);
-
         setFileContent(result);
       } catch (e) {
         if (e instanceof Error) return setError(e.message);
         setError(String(error));
       }
-      setLoading(false);
+      //setLoading(false);
     }
   };
 
+  const { isLoading, data, isError } = useQuery(
+    ["file-content", item],
+    getFileContent
+  );
+
+  // useEffect(() => {
+  //   getFileContent();
+  // }, []);
+
   const displayFileContent = () => {
-    if (error) {
+    if (error || isError) {
       return (
         <CenterDiv>
           <Typography>Unable to load gist...</Typography>
@@ -68,7 +71,7 @@ export default function GistCard(props: GistCardProps) {
 
   return (
     <StyledCard onClick={() => onCardClick(item)}>
-      <GistDiv>{loading ? <Loader /> : displayFileContent()}</GistDiv>
+      <GistDiv>{isLoading ? <Loader /> : displayFileContent()}</GistDiv>
       <TopBorderDiv>
         <UserInfo item={item} />
       </TopBorderDiv>
