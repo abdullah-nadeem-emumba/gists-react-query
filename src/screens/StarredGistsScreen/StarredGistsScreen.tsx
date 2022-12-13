@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useQuery } from "react-query";
 import Root from "../../layout/Root/Root";
 import StarredGists from "../../views/StarredGists/StarredGists";
@@ -9,8 +9,6 @@ import useSearch from "../../utils/useSearch";
 
 export default function StarredGistsScreen() {
   const [viewType, setViewType] = useState("LIST");
-  // const [loading, setLoading] = useState(false);
-  // const [gists, setGists] = useState([]);
   const [page, setPage] = useState(1);
   const [searchVal, handleSearchChange, handleSearch] = useSearch();
   const navigate = useNavigate();
@@ -32,22 +30,6 @@ export default function StarredGistsScreen() {
   const openGistDetails = (gist: any) => {
     navigate("/gistdetails", { state: { ...gist } });
   };
-
-  // useEffect(() => {
-  //   listStarredGists();
-  // }, []);
-
-  // useEffect(() => {
-  //   listStarredGists();
-  // }, [page]);
-
-  // const listStarredGists = async () => {
-  //   setLoading(true);
-  //   const data = await getStarredGists(9, page);
-  //   setGists(data);
-  //   setLoading(false);
-  //   setPage(1);
-  // };
 
   const star = async (
     gistID: string,

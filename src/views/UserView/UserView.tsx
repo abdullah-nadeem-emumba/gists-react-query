@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useQuery } from "react-query";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import UserGist from "../../components/UserGist/UserGist";
 import { Typography, Avatar, Button } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -13,27 +13,21 @@ import {
   StyledLink,
 } from "./UserView.styles";
 import Loader from "../../components/Loader/Loader";
-import { RootState, AppDispatch } from "../../store/store";
-import { getPublicUserGists, getAuthGists } from "../../slices/profileSlice";
+import { RootState } from "../../store/store";
 import { UserViewProps } from "../../types/types";
 
 export default function UserView(props: UserViewProps) {
   const { username } = props;
   const [gists, setGists] = useState<any[]>([]);
-  //const [loading, setLoading] = useState(false);
   const { state } = useLocation();
   const navigate = useNavigate();
-  // const { gists, loading } = useSelector(
-  //   (state: RootState) => state.userProfile
-  // );
-  const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((state: RootState) => state.user);
 
   const onSuccess = (data: any) => {
     setGists(data);
   };
 
-  const { data: publicUserGists, isLoading: publicUserLoading } = useQuery(
+  const { isLoading: publicUserLoading } = useQuery(
     ["public-user-gists", username],
     () => getUserGists(username),
     {
@@ -42,7 +36,7 @@ export default function UserView(props: UserViewProps) {
     }
   );
 
-  const { data: authUserGists, isLoading: authUserLoading } = useQuery(
+  const { isLoading: authUserLoading } = useQuery(
     ["auth-user-gists", username],
     getAuthUserGists,
     {
@@ -53,47 +47,9 @@ export default function UserView(props: UserViewProps) {
 
   const owner: any = gists?.length > 0 && gists[0].owner;
 
-  // useEffect(() => {
-  //   getGists();
-  // }, []);
-
-  // useEffect(() => {
-  //   getGists();
-  // }, [username, user?.username]);
-
-  // const getGists = async () => {
-  //   if (user?.username && username === user?.username) {
-  //     dispatch(getAuthGists());
-  //   } else {
-  //     dispatch(getPublicUserGists(username));
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getGists();
-  // }, [username, user]);
-
-  // useEffect(() => {
-  //   getGists();
-  // }, []);
-
-  // const getGists = async () => {
-  //   setLoading(true);
-  //   if (user && username === user.username) {
-  //     const res = await getAuthUserGists();
-  //     setGists(res);
-  //   } else {
-  //     const response = await getUserGists(username);
-  //     setGists(response);
-  //   }
-  //   setLoading(false);
-  // };
-
   const openGistDetails = (gist: any) => {
     navigate("/gistdetails", { state: { ...gist } });
   };
-
-  console.log({ gists });
 
   const listGists = () => {
     if (gists && gists?.length > 0) {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import {
@@ -19,23 +19,15 @@ import GistActions from "../../components/GistActions/GistActions";
 import ArrowsBox from "../../components/ArrowBox/Arrowbox";
 import { useLocation, useNavigate } from "react-router-dom";
 import { formatFileContent } from "../../utils/utils";
-import {
-  isGistStarred,
-  getGistContent,
-  starGist,
-  unStarGist,
-  deleteGist,
-  forkGist,
-} from "../../api/api";
+import { isGistStarred, getGistContent, forkGist } from "../../api/api";
 import Loader from "../../components/Loader/Loader";
 import { useQuery } from "react-query";
-import { useUnStarGist, useStarGist, useIsStarred } from "../../utils/useStar";
+import { useUnStarGist, useStarGist } from "../../utils/useStar";
 import { useDeleteGist } from "../../utils/useCreateGist";
 
 export default function GistDetails() {
   const [filecontent, setFileContent] = useState<string[]>([]);
   const [filesData, setFilesData] = useState<any[]>([]);
-  //const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [starred, setStarred] = useState<boolean | undefined>(false);
   const { state } = useLocation();
@@ -82,7 +74,6 @@ export default function GistDetails() {
   };
 
   const getFileContent = async () => {
-    //setLoading(true);
     try {
       const filesArr = Object.keys(files);
       let filesArray: any[] = [];
@@ -101,15 +92,9 @@ export default function GistDetails() {
       if (error instanceof Error) return setError(error.message);
       setError(String(error));
     }
-    //setLoading(false);
   };
 
   const { isLoading, isError } = useQuery("file-content", getFileContent);
-
-  // useEffect(() => {
-  //   //checkGistStar(id);
-  //   //getFileContent();
-  // }, []);
 
   const displayFileContent = () => {
     if (error || isError) {

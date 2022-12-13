@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
@@ -12,23 +12,16 @@ import {
   FlexDiv,
   StyledText,
 } from "./UserGist.styles";
-import {
-  starGist,
-  unStarGist,
-  getGistContent,
-  isGistStarred,
-  forkGist,
-} from "../../api/api";
+import { getGistContent, isGistStarred, forkGist } from "../../api/api";
 import { formatFileContent } from "../../utils/utils";
 import GistActions from "../GistActions/GistActions";
 import { UserGistProps } from "../../types/types";
-import { useUnStarGist, useStarGist, useIsStarred } from "../../utils/useStar";
+import { useUnStarGist, useStarGist } from "../../utils/useStar";
 import Loader from "../Loader/Loader";
 
 export default function UserGist(props: UserGistProps) {
   const { item, onGistClick } = props;
   const [filecontent, setFileContent] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [starred, setStarred] = useState<boolean | undefined>(false);
   const user = useSelector((state: RootState) => state.user);
@@ -36,12 +29,7 @@ export default function UserGist(props: UserGistProps) {
   const { mutate: starGist, isError: starErr } = useStarGist();
   const { mutate: unStarGist, isError: unstarErr } = useUnStarGist();
 
-  // useEffect(() => {
-  //   getFileContent();
-  //   checkGistStar(item.id);
-  // }, []);
-
-  const onSuccess = (data: any) => {
+  const onSuccess = (data: boolean) => {
     setStarred(data);
   };
 
@@ -49,14 +37,8 @@ export default function UserGist(props: UserGistProps) {
     onSuccess,
   });
 
-  // useEffect(() => {
-  //   getFileContent();
-  //   checkGistStar(item.id);
-  // }, [item.id]);
-
   const getFileContent = async () => {
     if (item) {
-      //setLoading(true);
       try {
         const filename = Object.keys(item.files)[0];
         const response = await getGistContent(item.files[filename].raw_url);
@@ -66,24 +48,14 @@ export default function UserGist(props: UserGistProps) {
         if (e instanceof Error) return setError(e.message);
         setError(String(error));
       }
-      //setLoading(false);
     }
   };
 
-  const { isLoading, data, isError } = useQuery(
+  const { isLoading, isError } = useQuery(
     ["file-content", item],
     getFileContent
   );
 
-  // const toggleStar = async (gistID: string) => {
-  //   if (!starred) {
-  //     const res = await starGist(gistID);
-  //     if (res) setStarred(true);
-  //   } else {
-  //     const res = await unStarGist(gistID);
-  //     if (res) setStarred(false);
-  //   }
-  // };
   const toggleStar = async (gistID: string) => {
     if (!starred) {
       starGist(gistID);
@@ -96,26 +68,19 @@ export default function UserGist(props: UserGistProps) {
     }
   };
 
-  // const checkGistStar = async (gistID: string) => {
-  //   const res = await isGistStarred(gistID);
-  //   setStarred(res);
-  // };
-
   const fork = async (gistID: string) => {
     const res = await forkGist(gistID);
   };
 
   const displayFileContent = () => {
-    if (error) {
+    if (error || isError) {
       return (
         <CenterDiv>
-          {isLoading ? (
-            <Loader />
-          ) : (
-            <Typography>Unable to load gist...</Typography>
-          )}
+          <Typography>Unable to load gist...</Typography>
         </CenterDiv>
       );
+    } else if (isLoading) {
+      return <Loader />;
     } else if (filecontent.length > 0) {
       return React.Children.toArray(
         filecontent.map((line, index) => {

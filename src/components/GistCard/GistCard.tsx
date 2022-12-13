@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useQuery } from "react-query";
 import {
   GistDiv,
@@ -19,12 +19,10 @@ import Loader from "../Loader/Loader";
 export default function GistCard(props: GistCardProps) {
   const { onCardClick, item } = props;
   const [filecontent, setFileContent] = useState<string[]>([]);
-  //const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const getFileContent = async () => {
     if (item) {
-      //setLoading(true);
       try {
         const filename = Object.keys(item.files)[0];
         const response = await getGistContent(item.files[filename].raw_url);
@@ -34,7 +32,6 @@ export default function GistCard(props: GistCardProps) {
         if (e instanceof Error) return setError(e.message);
         setError(String(error));
       }
-      //setLoading(false);
     }
   };
 
@@ -42,10 +39,6 @@ export default function GistCard(props: GistCardProps) {
     ["file-content", item],
     getFileContent
   );
-
-  // useEffect(() => {
-  //   getFileContent();
-  // }, []);
 
   const displayFileContent = () => {
     if (error || isError) {

@@ -1,4 +1,3 @@
-import React, { useState, useMemo } from "react";
 import { Routes, Route } from "react-router-dom";
 import GlobalStyles from "./styles/global";
 import UserProfile from "./screens/UserProfileScreen/UserProfile";
@@ -7,7 +6,6 @@ import CreateGist from "./screens/CreateGistScreen/CreateGist";
 import Home from "./screens/HomeScreen/Home";
 import SearchScreen from "./screens/SearchScreen/SearchScreen";
 import StarredGistsScreen from "./screens/StarredGistsScreen/StarredGistsScreen";
-import { getUserFromStorage } from "./utils/utils";
 import Protected from "./components/ProtectedRoute/Protected";
 import { QueryClientProvider, QueryClient } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";

@@ -3,19 +3,29 @@ import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarIcon from "@mui/icons-material/Star";
 import { isGistStarred } from "../../api/api";
 import { TableStarProps } from "../../types/types";
+import { useQuery } from "react-query";
 
 export default function Star(props: TableStarProps) {
   const { id, handleStar, handleUnstar } = props;
   const [starred, setStarred] = useState<boolean | undefined>(false);
 
-  useEffect(() => {
-    checkGistStar(id);
-  }, []);
+  // useEffect(() => {
+  //   checkGistStar(id);
+  // }, []);
 
-  const checkGistStar = async (gistID: string) => {
-    const res = await isGistStarred(gistID);
-    setStarred(res);
+  const onSuccess = (data: boolean) => {
+    setStarred(data);
   };
+
+  useQuery(["check-gist-star", id], () => isGistStarred(id), {
+    onSuccess,
+    refetchOnWindowFocus: false,
+  });
+
+  // const checkGistStar = async (gistID: string) => {
+  //   const res = await isGistStarred(gistID);
+  //   setStarred(res);
+  // };
 
   // const star = async (gistID: string) => {
   //   const res = await starGist(gistID);

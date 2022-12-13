@@ -66,7 +66,7 @@ export const starGist = async (gistID: string) => {
 
 export const unStarGist = async (gistID: string) => {
   const response = await api.delete(`/gists/${gistID}/star`, getConfig());
-  console.log({ response });
+  //console.log({ response });
 
   return response.status === 204 ? true : false;
 };
@@ -125,6 +125,8 @@ export const createNewGist = async ({ description, files }: createGistType) => {
 };
 
 export const editGist = async ({ id, description, files }: editGistType) => {
+  console.log({ files });
+
   const data = {
     gist_id: id,
     description,
@@ -142,7 +144,7 @@ export const editGist = async ({ id, description, files }: editGistType) => {
 
 export const getStarredGists = async (per_page: number, page: number) => {
   const response = await api.get(
-    `/gists/starred?paer_page=${per_page}&page=${page}`,
+    `/gists/starred?per_page=${per_page}&page=${page}`,
     getConfig()
   );
   console.log(response);
