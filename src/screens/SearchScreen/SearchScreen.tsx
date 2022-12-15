@@ -5,13 +5,20 @@ import Header from "../../layout/Header/Header";
 import LandingScreen from "../../views/LandingScreen/LandingScreen";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getSearchedGists } from "../../api/api";
-import { useStarGist, useUnStarGist } from "../../utils/useStar";
+import {
+  useStarGist,
+  useUnStarGist,
+  useStarSelected,
+  useUnstarSelected,
+} from "../../utils/useStar";
 
 export default function SearchScreen() {
   const [viewType, setViewType] = useState("LIST");
   const [page, setPage] = useState(1);
   const [searchVal, setSearchVal] = useState("");
   const [emptyScreen, setEmptyScreen] = useState(false);
+  const [headerChecked, setHeaderChecked] = useState(false);
+  const [checkedRows, setCheckedRows] = useState<string[]>([]);
   const navigate = useNavigate();
   const { state } = useLocation();
 
@@ -24,6 +31,34 @@ export default function SearchScreen() {
     () => getSearchedGists(searchVal || state?.searchUserName, 9, page),
     { cacheTime: 0 }
   );
+
+  const onHeaderCheckedChange = (e: any) => {
+    setHeaderChecked(e.target.checked);
+    if (e.target.checked) {
+      const gistIDs = gists.map((item: any) => item.id);
+      setCheckedRows([...gistIDs]);
+    } else {
+      setCheckedRows([]);
+    }
+  };
+
+  const onRowCheck = (e: any, gistID: string) => {
+    if (e.target.checked) {
+      addGistToChecked(gistID);
+    } else {
+      removeGistFromChecked(gistID);
+    }
+  };
+
+  console.log({ checkedRows });
+
+  const addGistToChecked = (gistID: string) => {
+    setCheckedRows([...checkedRows, gistID]);
+  };
+
+  const removeGistFromChecked = (gistID: string) => {
+    setCheckedRows((items) => items.filter((item) => item !== gistID));
+  };
 
   const { mutate: starGist, isError: starErr } = useStarGist();
   const { mutate: unStarGist, isError: unstarErr } = useUnStarGist();
@@ -58,6 +93,22 @@ export default function SearchScreen() {
   const openGistDetails = (gist: any) => {
     navigate("/gistdetails", { state: { ...gist } });
   };
+
+  const OnSelectedSuccess = () => {
+    setCheckedRows([]);
+    setHeaderChecked(false);
+  };
+
+  const { mutate: starSelected } = useStarSelected(
+    checkedRows,
+    OnSelectedSuccess
+  );
+
+  const { mutate: unstarSelected } = useUnstarSelected(
+    checkedRows,
+    OnSelectedSuccess
+  );
+
   return (
     <Root
       header={
@@ -81,6 +132,12 @@ export default function SearchScreen() {
           page={page}
           handleStar={star}
           handleUnstar={unStar}
+          headerChecked={headerChecked}
+          onHeaderCheckedChange={onHeaderCheckedChange}
+          onRowCheck={onRowCheck}
+          checkedRows={checkedRows}
+          starSelected={starSelected}
+          unstarSelected={unstarSelected}
         />
       }
     />

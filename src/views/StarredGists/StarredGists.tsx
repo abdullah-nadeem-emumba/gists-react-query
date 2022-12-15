@@ -5,7 +5,14 @@ import ToggleView from "../../components/ToggleView/ToggleView";
 import CardView from "../CardView/CardView";
 import PaginationFooter from "../../components/PaginationFooter/PaginationFooter";
 import Loader from "../../components/Loader/Loader";
+import {
+  FlexDiv,
+  FlexEnd,
+  BlueText,
+} from "../LandingScreen/LandingScreen.styles";
 import { LandingScreenProps } from "../../types/types";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
+import StarIcon from "@mui/icons-material/Star";
 
 export default function StarredGists(props: LandingScreenProps) {
   const {
@@ -20,16 +27,33 @@ export default function StarredGists(props: LandingScreenProps) {
     handleNextPage,
     handleStar,
     handleUnstar,
+    onHeaderCheckedChange,
+    onRowCheck,
+    checkedRows,
+    headerChecked,
+    unstarSelected,
   } = props;
   const displayScreen = () => (
     <div>
-      <ToggleView viewType={viewType} setViewType={setViewType} />
+      <FlexEnd>
+        {checkedRows?.length > 0 && (
+          <FlexDiv onClick={unstarSelected}>
+            <StarBorderIcon sx={{ color: "#0C76FF" }} />
+            <BlueText>Unstar</BlueText>
+          </FlexDiv>
+        )}
+        <ToggleView viewType={viewType} setViewType={setViewType} />
+      </FlexEnd>
       {viewType === LIST && (
         <TableView
           gists={gists}
           onRowClick={openGistDetails}
           handleStar={handleStar}
           handleUnstar={handleUnstar}
+          onHeaderCheckedChange={onHeaderCheckedChange}
+          headerChecked={headerChecked}
+          onRowCheck={onRowCheck}
+          checkedRows={checkedRows}
         />
       )}
       {viewType === CARD && (

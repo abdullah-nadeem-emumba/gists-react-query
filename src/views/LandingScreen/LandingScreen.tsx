@@ -6,6 +6,9 @@ import CardView from "../CardView/CardView";
 import { LIST, CARD } from "../../constants/constants";
 import PaginationFooter from "../../components/PaginationFooter/PaginationFooter";
 import Loader from "../../components/Loader/Loader";
+import { FlexDiv, BlueText, FlexEnd } from "./LandingScreen.styles";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
+import StarIcon from "@mui/icons-material/Star";
 
 export default function LandingScreen(props: LandingScreenProps) {
   const {
@@ -21,6 +24,12 @@ export default function LandingScreen(props: LandingScreenProps) {
     handleNextPage,
     handleStar,
     handleUnstar,
+    headerChecked,
+    onHeaderCheckedChange,
+    onRowCheck,
+    checkedRows,
+    starSelected,
+    unstarSelected,
   } = props;
   const displayScreen = () => (
     <div>
@@ -28,13 +37,31 @@ export default function LandingScreen(props: LandingScreenProps) {
         <div>No Results Found!</div>
       ) : (
         <>
-          <ToggleView viewType={viewType} setViewType={setViewType} />
+          <FlexEnd>
+            {checkedRows?.length > 0 && (
+              <>
+                <FlexDiv onClick={unstarSelected}>
+                  <StarBorderIcon sx={{ color: "#0C76FF" }} />
+                  <BlueText>Unstar</BlueText>
+                </FlexDiv>
+                <FlexDiv onClick={starSelected}>
+                  <StarIcon sx={{ color: "#0C76FF" }} />
+                  <BlueText>Star</BlueText>
+                </FlexDiv>
+              </>
+            )}
+            <ToggleView viewType={viewType} setViewType={setViewType} />
+          </FlexEnd>
           {viewType === LIST && (
             <TableView
               handleStar={handleStar}
               handleUnstar={handleUnstar}
               gists={gists}
               onRowClick={openGistDetails}
+              onHeaderCheckedChange={onHeaderCheckedChange}
+              headerChecked={headerChecked}
+              onRowCheck={onRowCheck}
+              checkedRows={checkedRows}
             />
           )}
           {viewType === CARD && (

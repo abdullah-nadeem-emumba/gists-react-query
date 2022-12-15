@@ -1,3 +1,4 @@
+import React from "react";
 import { Routes, Route } from "react-router-dom";
 import GlobalStyles from "./styles/global";
 import UserProfile from "./screens/UserProfileScreen/UserProfile";

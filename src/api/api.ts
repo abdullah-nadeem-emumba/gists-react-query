@@ -107,24 +107,32 @@ export const getUserGists = async (username: string | undefined) => {
   }
 };
 
-export const createNewGist = async ({ description, files }: createGistType) => {
+export const createNewGist = async ({
+  description,
+  files,
+  controller,
+}: createGistType) => {
   const data = {
     description,
     public: true,
     files: returnFiles(files),
   };
-  try {
-    const response = await api.post("/gists", data, getConfig());
-    console.log(response);
-    if (response.status === 200) {
-      return true;
-    }
-  } catch (error) {
-    return false;
+  const response = await api.post("/gists", data, {
+    signal: controller.signal,
+    ...getConfig(),
+  });
+  console.log("create gist", response);
+  if (response.status === 201) {
+    return true;
   }
 };
 
-export const editGist = async ({ id, description, files }: editGistType) => {
+export const editGist = async ({
+  id,
+  description,
+  files,
+  controller,
+}: editGistType) => {
   console.log({ files });
 
   const data = {
@@ -132,14 +140,12 @@ export const editGist = async ({ id, description, files }: editGistType) => {
     description,
     files: returnFiles(files),
   };
-  try {
-    const response = await api.patch(`/gists/${id}`, data, getConfig());
-    console.log(response);
-    if (response.status === 200) return true;
-  } catch (error) {
-    console.log(error);
-    return false;
-  }
+  const response = await api.patch(`/gists/${id}`, data, {
+    signal: controller.signal,
+    ...getConfig(),
+  });
+  console.log(response);
+  if (response.status === 200) return true;
 };
 
 export const getStarredGists = async (per_page: number, page: number) => {

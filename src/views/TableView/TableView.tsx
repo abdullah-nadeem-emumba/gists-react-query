@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import {
@@ -23,8 +23,20 @@ import {
 import { formattedDate, formattedTime } from "../../utils/utils";
 
 export default function TableView(props: TableViewProps) {
+  const {
+    headerChecked,
+    onHeaderCheckedChange,
+    onRowCheck,
+    checkedRows,
+    gists,
+    onRowClick,
+  } = props;
   const user = useSelector((state: RootState) => state.user);
-  const { gists, onRowClick } = props;
+
+  const setCheckBox = (gistID: string): boolean => {
+    return checkedRows.includes(gistID);
+  };
+
   const displayFileNames = (filesArr: string[]) => {
     return React.Children.toArray(
       filesArr.map((file) => {
@@ -43,7 +55,10 @@ export default function TableView(props: TableViewProps) {
           <TableHead>
             <StyledHeaderRow>
               <TableCell sx={{ width: "2em" }}>
-                <Checkbox />
+                <Checkbox
+                  checked={headerChecked}
+                  onChange={onHeaderCheckedChange}
+                />
               </TableCell>
               <TableCell></TableCell>
               <StyledHeaderCell>Name</StyledHeaderCell>
@@ -66,7 +81,10 @@ export default function TableView(props: TableViewProps) {
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
                       <TableCell sx={{ width: ".1em", paddingRight: ".2em" }}>
-                        <Checkbox />
+                        <Checkbox
+                          checked={setCheckBox(row.id)}
+                          onChange={(e) => onRowCheck(e, row.id)}
+                        />
                       </TableCell>
                       <TableCell
                         sx={{

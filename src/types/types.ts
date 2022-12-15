@@ -63,6 +63,12 @@ export type LandingScreenProps = {
   ) => void;
   handleStar: (id: string, setStarred: (starred: boolean) => void) => void;
   handleUnstar: (id: string, setStarred: (starred: boolean) => void) => void;
+  headerChecked: boolean;
+  onHeaderCheckedChange: (e: any) => void;
+  onRowCheck: (e: any, gistID: string) => void;
+  checkedRows: string[];
+  starSelected: any;
+  unstarSelected: any;
 };
 
 export type RootProps = {
@@ -75,6 +81,10 @@ export type TableViewProps = {
   onRowClick: (gist: any) => void;
   handleStar: (id: string, setStarred: (starred: boolean) => void) => void;
   handleUnstar: (id: string, setStarred: (starred: boolean) => void) => void;
+  headerChecked: boolean;
+  onHeaderCheckedChange: (e: any) => void;
+  onRowCheck: (e: any, gistID: string) => void;
+  checkedRows: string[];
 };
 
 export type UserViewProps = {
@@ -128,10 +138,17 @@ export type TableStarProps = {
 export type createGistType = {
   description: string;
   files: any;
+  controller: AbortController;
 };
 
 export type editGistType = {
   id: string;
   description: string;
   files: any;
+  controller: AbortController;
+};
+
+export type CheckboxProps = {
+  checked: boolean;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };

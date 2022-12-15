@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import FormHookField from "../../components/FormHookField/FormHookField";
 import Button from "../../components/Button/Button";
 import * as Yup from "yup";
@@ -16,6 +16,7 @@ import { useCreateGist, useEditGist } from "../../utils/useCreateGist";
 export default function GistHookForm() {
   const navigate = useNavigate();
   const { state } = useLocation();
+  const controller = useRef<AbortController>();
 
   const validationSchema = Yup.object({
     description: Yup.string()
@@ -46,8 +47,12 @@ export default function GistHookForm() {
     navigate("/");
   };
 
-  const { mutate: createGist } = useCreateGist(onSuccess);
-  const { mutate: editGist } = useEditGist(onSuccess);
+  const { mutate: createGist, isLoading: creating } = useCreateGist(onSuccess);
+  const {
+    mutate: editGist,
+    isLoading: editing,
+    error,
+  } = useEditGist(onSuccess);
 
   const { fields, append, remove } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)
@@ -55,15 +60,25 @@ export default function GistHookForm() {
   });
 
   const submitForm = async (data: any) => {
+    controller.current = new AbortController();
     if (state) {
       editGist({
         id: state.id,
         description: data.description,
         files: data.files,
+        controller: controller.current,
       });
     } else {
-      createGist({ description: data.description, files: data.files });
+      createGist({
+        description: data.description,
+        files: data.files,
+        controller: controller.current,
+      });
     }
+  };
+
+  const cancelRequest = () => {
+    controller?.current && controller.current.abort();
   };
 
   return (
@@ -148,11 +163,19 @@ export default function GistHookForm() {
               customstyle="dark"
               text="Add File"
             ></Button>
-            <Button
-              customstyle="dark"
-              type={"submit"}
-              text={state ? "Update Gist" : "Create Gist"}
-            ></Button>
+            {creating || editing ? (
+              <Button
+                text="Cancel"
+                customstyle="dark"
+                onClick={cancelRequest}
+              ></Button>
+            ) : (
+              <Button
+                customstyle="dark"
+                type={"submit"}
+                text={state ? "Update Gist" : "Create Gist"}
+              ></Button>
+            )}
           </StyledDiv>
         </form>
       </FormContainer>
