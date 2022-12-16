@@ -19,8 +19,9 @@ export default function StarredGistsScreen() {
   const [checkedRows, setCheckedRows] = useState<string[]>([]);
   const [searchVal, handleSearchChange, handleSearch] = useSearch();
   const navigate = useNavigate();
-  const { data, isLoading, isError } = useQuery(["search-gists", page], () =>
-    getStarredGists(9, page)
+  const { data, isLoading, isError, isFetching, refetch } = useQuery(
+    ["search-gists", page],
+    () => getStarredGists(9, page)
   );
 
   const { mutate: unStarGist } = useUnStarGist();
@@ -79,6 +80,7 @@ export default function StarredGistsScreen() {
   const OnSelectedSuccess = () => {
     setCheckedRows([]);
     setHeaderChecked(false);
+    refetch();
   };
 
   const { mutate: starSelected } = useStarSelected(
@@ -106,7 +108,7 @@ export default function StarredGistsScreen() {
           viewType={viewType}
           setViewType={setViewType}
           gists={data}
-          loading={isLoading}
+          loading={isLoading || isFetching}
           count={data?.length}
           openGistDetails={openGistDetails}
           handleChangePage={handleChangePage}

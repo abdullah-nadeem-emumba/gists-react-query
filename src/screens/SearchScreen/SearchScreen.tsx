@@ -26,6 +26,7 @@ export default function SearchScreen() {
     data: gists,
     refetch,
     isError,
+    isFetching,
   } = useQuery(
     ["search-gists", page],
     () => getSearchedGists(searchVal || state?.searchUserName, 9, page),
@@ -97,6 +98,7 @@ export default function SearchScreen() {
   const OnSelectedSuccess = () => {
     setCheckedRows([]);
     setHeaderChecked(false);
+    refetch();
   };
 
   const { mutate: starSelected } = useStarSelected(
@@ -124,7 +126,7 @@ export default function SearchScreen() {
           viewType={viewType}
           setViewType={setViewType}
           gists={gists}
-          loading={isLoading}
+          loading={isLoading || isFetching}
           count={gists?.length}
           openGistDetails={openGistDetails}
           handleChangePage={handleChangePage}
