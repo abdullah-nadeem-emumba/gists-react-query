@@ -20,10 +20,10 @@ export default function Home() {
   const [checkedRows, setCheckedRows] = useState<string[]>([]);
   const [searchVal, handleSearchChange, handleSearch] = useSearch();
   const navigate = useNavigate();
-  const { isLoading, data, isError } = useQuery(
+  const { isLoading, data, isError, refetch, isFetching } = useQuery(
     ["public-gists", page],
     () => getPublicGists(9, page),
-    { refetchInterval: 60000 }
+    { refetchInterval: 60000, refetchOnWindowFocus: false }
   );
 
   const onHeaderCheckedChange = (e: any) => {
@@ -85,6 +85,7 @@ export default function Home() {
   const OnSelectedSuccess = () => {
     setCheckedRows([]);
     setHeaderChecked(false);
+    refetch();
   };
 
   const { mutate: starSelected } = useStarSelected(
@@ -111,7 +112,7 @@ export default function Home() {
           viewType={viewType}
           setViewType={setViewType}
           gists={data}
-          loading={isLoading}
+          loading={isLoading || isFetching}
           count={data?.length}
           openGistDetails={openGistDetails}
           handleChangePage={handleChangePage}
