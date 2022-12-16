@@ -58,6 +58,8 @@ export default function UserView(props: UserViewProps) {
           <UserGist onGistClick={() => openGistDetails(item)} item={item} />
         ))
       );
+    } else {
+      return <CenterDiv>No gists found!</CenterDiv>;
     }
   };
 

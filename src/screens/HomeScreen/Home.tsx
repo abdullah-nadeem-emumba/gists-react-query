@@ -20,7 +20,7 @@ export default function Home() {
   const [checkedRows, setCheckedRows] = useState<string[]>([]);
   const [searchVal, handleSearchChange, handleSearch] = useSearch();
   const navigate = useNavigate();
-  const { isLoading, data } = useQuery(
+  const { isLoading, data, isError } = useQuery(
     ["public-gists", page],
     () => getPublicGists(9, page),
     { refetchInterval: 60000 }
@@ -125,6 +125,7 @@ export default function Home() {
           checkedRows={checkedRows}
           starSelected={starSelected}
           unstarSelected={unstarSelected}
+          emptyScreen={isError}
         />
       }
     />

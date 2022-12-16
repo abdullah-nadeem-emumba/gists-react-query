@@ -2,11 +2,15 @@ import { useMutation } from "react-query";
 import { starGist, unStarGist } from "../api/api";
 
 export const useStarGist = () => {
-  return useMutation(starGist);
+  return useMutation(starGist, {
+    onError: () => alert("Something went wrong! Please try again"),
+  });
 };
 
 export const useUnStarGist = () => {
-  return useMutation(unStarGist);
+  return useMutation(unStarGist, {
+    onError: () => alert("Something went wrong! Please try again"),
+  });
 };
 
 export const useStarSelected = (
@@ -26,7 +30,10 @@ export const useStarSelected = (
     return result;
   };
 
-  return useMutation(starSelectedGists, { onSuccess });
+  return useMutation(starSelectedGists, {
+    onSuccess,
+    onError: () => alert("Something went wrong! Please try again"),
+  });
 };
 
 export const useUnstarSelected = (
@@ -46,5 +53,8 @@ export const useUnstarSelected = (
     return result;
   };
 
-  return useMutation(unStarSelectedGists, { onSuccess });
+  return useMutation(unStarSelectedGists, {
+    onSuccess,
+    onError: () => alert("Something went wrong! Please try again"),
+  });
 };

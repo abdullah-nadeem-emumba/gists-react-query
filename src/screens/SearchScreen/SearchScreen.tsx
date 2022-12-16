@@ -16,7 +16,6 @@ export default function SearchScreen() {
   const [viewType, setViewType] = useState("LIST");
   const [page, setPage] = useState(1);
   const [searchVal, setSearchVal] = useState("");
-  const [emptyScreen, setEmptyScreen] = useState(false);
   const [headerChecked, setHeaderChecked] = useState(false);
   const [checkedRows, setCheckedRows] = useState<string[]>([]);
   const navigate = useNavigate();
@@ -26,6 +25,7 @@ export default function SearchScreen() {
     isLoading,
     data: gists,
     refetch,
+    isError,
   } = useQuery(
     ["search-gists", page],
     () => getSearchedGists(searchVal || state?.searchUserName, 9, page),
@@ -120,7 +120,7 @@ export default function SearchScreen() {
       }
       main={
         <LandingScreen
-          emptyScreen={emptyScreen}
+          emptyScreen={isError || gists?.length < 1}
           viewType={viewType}
           setViewType={setViewType}
           gists={gists}

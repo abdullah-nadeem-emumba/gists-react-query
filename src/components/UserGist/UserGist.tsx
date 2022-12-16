@@ -33,8 +33,13 @@ export default function UserGist(props: UserGistProps) {
     setStarred(data);
   };
 
+  const onError = () => {
+    alert("Something went wrong! Please try again.");
+  };
+
   useQuery(["check-gist-star", item.id], () => isGistStarred(item.id), {
     onSuccess,
+    onError,
   });
 
   const getFileContent = async () => {

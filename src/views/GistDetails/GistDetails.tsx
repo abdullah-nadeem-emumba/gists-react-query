@@ -36,9 +36,13 @@ export default function GistDetails() {
   const filename = Object.keys(files)[0];
   const user = useSelector((state: RootState) => state.user);
 
+  const onDeleteSuccess = () => {
+    navigate("/");
+  };
+
   const { mutate: starGist, isError: starErr } = useStarGist();
   const { mutate: unStarGist, isError: unstarErr } = useUnStarGist();
-  const { mutate: deleteGist, isError: deleteErr } = useDeleteGist();
+  const { mutate: deleteGist } = useDeleteGist(onDeleteSuccess);
 
   const onSuccess = (data: any) => {
     setStarred(data);
@@ -54,7 +58,6 @@ export default function GistDetails() {
 
   const deleteMyGist = async (gistID: string) => {
     deleteGist(gistID);
-    if (!deleteErr) navigate("/");
   };
 
   const toggleStar = async (gistID: string) => {

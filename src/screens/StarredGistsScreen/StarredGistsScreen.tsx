@@ -3,13 +3,12 @@ import { useQuery } from "react-query";
 import Root from "../../layout/Root/Root";
 import StarredGists from "../../views/StarredGists/StarredGists";
 import Header from "../../layout/Header/Header";
-import { getStarredGists, starGist, unStarGist } from "../../api/api";
+import { getStarredGists } from "../../api/api";
 import { useNavigate } from "react-router-dom";
 import useSearch from "../../utils/useSearch";
 import {
   useStarSelected,
   useUnstarSelected,
-  useStarGist,
   useUnStarGist,
 } from "../../utils/useStar";
 
@@ -20,9 +19,11 @@ export default function StarredGistsScreen() {
   const [checkedRows, setCheckedRows] = useState<string[]>([]);
   const [searchVal, handleSearchChange, handleSearch] = useSearch();
   const navigate = useNavigate();
-  const { data, isLoading } = useQuery(["search-gists", page], () =>
+  const { data, isLoading, isError } = useQuery(["search-gists", page], () =>
     getStarredGists(9, page)
   );
+
+  const { mutate: unStarGist } = useUnStarGist();
 
   const onHeaderCheckedChange = (e: any) => {
     setHeaderChecked(e.target.checked);
@@ -67,33 +68,7 @@ export default function StarredGistsScreen() {
     navigate("/gistdetails", { state: { ...gist } });
   };
 
-  // const star = async (
-  //   gistID: string,
-  //   setStarred: (starred: boolean) => void
-  // ) => {
-  //   const res = await starGist(gistID);
-  //   if (res) {
-  //     setStarred(true);
-  //     navigate(0);
-  //   }
-  // };
-
-  // const unStar = async (
-  //   gistID: string,
-  //   setStarred: (starred: boolean) => void
-  // ) => {
-  //   const res = await unStarGist(gistID);
-  //   if (res) {
-  //     setStarred(false);
-  //     navigate(0);
-  //   }
-  // };
-
-  const star = (gistID: string, setStarred: (starred: boolean) => void) => {
-    starGist(gistID);
-    setStarred(true);
-    navigate(0);
-  };
+  const star = (gistID: string, setStarred: (starred: boolean) => void) => {};
 
   const unStar = (gistID: string, setStarred: (starred: boolean) => void) => {
     unStarGist(gistID);
@@ -127,6 +102,7 @@ export default function StarredGistsScreen() {
       }
       main={
         <StarredGists
+          emptyScreen={isError || data?.length < 1}
           viewType={viewType}
           setViewType={setViewType}
           gists={data}
